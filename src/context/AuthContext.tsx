@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Check if user is stored in localStorage
-    const storedUser = localStorage.getItem("kala-user");
+    const storedUser = localStorage.getItem("artvista-user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -33,15 +33,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     try {
       // This is a mock implementation - would be replaced with actual API call
-      if (email === "admin@kalabazaar.com" && password === "admin123") {
+      if (email === "admin@artvista.com" && password === "admin123") {
         const adminUser: User = {
           id: "admin-1",
-          email: "admin@kalabazaar.com",
+          email: "admin@artvista.com",
           name: "Admin User",
           isAdmin: true,
         };
         setUser(adminUser);
-        localStorage.setItem("kala-user", JSON.stringify(adminUser));
+        localStorage.setItem("artvista-user", JSON.stringify(adminUser));
         toast({
           title: "Logged in as Admin",
           description: "Welcome back to the admin panel",
@@ -56,10 +56,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           isAdmin: false,
         };
         setUser(regularUser);
-        localStorage.setItem("kala-user", JSON.stringify(regularUser));
+        localStorage.setItem("artvista-user", JSON.stringify(regularUser));
         toast({
           title: "Login Successful",
-          description: "Welcome to Kala Bazaar!",
+          description: "Welcome to ArtVista!",
         });
         return true;
       } else {
@@ -95,10 +95,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           isAdmin: false,
         };
         setUser(newUser);
-        localStorage.setItem("kala-user", JSON.stringify(newUser));
+        localStorage.setItem("artvista-user", JSON.stringify(newUser));
         toast({
           title: "Account Created",
-          description: "Welcome to Kala Bazaar!",
+          description: "Welcome to ArtVista!",
         });
         return true;
       } else {
@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("kala-user");
+    localStorage.removeItem("artvista-user");
     toast({
       title: "Logged Out",
       description: "You have been logged out successfully",

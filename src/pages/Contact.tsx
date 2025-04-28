@@ -42,16 +42,43 @@ const Contact = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const onSubmit = (values: FormValues) => {
-    // In a real application, this would send an API request
+  const onSubmit = async (values: FormValues) => {
+    // In a real application with email service configured in .env
     console.log("Form submitted:", values);
     
-    toast({
-      title: "Message Sent",
-      description: "We'll get back to you as soon as possible.",
-    });
-    
-    form.reset();
+    try {
+      // If email API is configured
+      const emailApiEndpoint = import.meta.env.VITE_EMAIL_API_ENDPOINT;
+      const emailApiKey = import.meta.env.VITE_EMAIL_API_KEY;
+      
+      if (emailApiEndpoint && emailApiKey) {
+        // This would be a real API call in production
+        // await fetch(emailApiEndpoint, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${emailApiKey}`
+        //   },
+        //   body: JSON.stringify(values)
+        // });
+        
+        console.log("Would send email with:", { emailApiEndpoint, emailApiKey });
+      }
+      
+      toast({
+        title: "Message Sent",
+        description: "We'll get back to you as soon as possible.",
+      });
+      
+      form.reset();
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -83,9 +110,9 @@ const Contact = () => {
             <div className="bg-card p-4 rounded-lg border">
               <h3 className="font-medium">Email</h3>
               <p className="text-muted-foreground">
-                info@kalabazaar.com
+                info@artvista.com
                 <br />
-                support@kalabazaar.com
+                support@artvista.com
               </p>
             </div>
 

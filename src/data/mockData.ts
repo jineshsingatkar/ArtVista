@@ -124,6 +124,78 @@ export const artworks: Artwork[] = [
     dimensions: "40 x 40 inches",
     artist: artists[3],
     inStock: true
+  },
+  {
+    id: "art-9",
+    title: "Sacred Geometry Mandala",
+    description: "An intricate mandala artwork featuring sacred geometry patterns in vibrant colors, symbolizing cosmic harmony.",
+    price: 48000,
+    image: "https://images.unsplash.com/photo-1527576539890-dfa815648363?q=80&w=500&auto=format&fit=crop",
+    category: "Mandala",
+    medium: "Acrylic on Canvas",
+    dimensions: "36 x 36 inches",
+    artist: artists[0],
+    inStock: true
+  },
+  {
+    id: "art-10",
+    title: "Canvas Dreams",
+    description: "A stunning canvas painting exploring the boundaries between reality and dreams through bold brushstrokes and vivid colors.",
+    price: 52000,
+    image: "https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?q=80&w=500&auto=format&fit=crop",
+    category: "Canvas",
+    medium: "Oil on Canvas",
+    dimensions: "48 x 36 inches",
+    artist: artists[1],
+    inStock: true
+  },
+  {
+    id: "art-11",
+    title: "Portrait of Silence",
+    description: "A detailed pencil sketch portraying the subtle emotions in a human face, emphasizing the power of silence.",
+    price: 32000,
+    image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=500&auto=format&fit=crop",
+    category: "Sketch",
+    medium: "Graphite on Paper",
+    dimensions: "18 x 24 inches",
+    artist: artists[2],
+    inStock: true
+  },
+  {
+    id: "art-12",
+    title: "Zentangle Universe",
+    description: "A mesmerizing zentangle artwork featuring intricate patterns that form a cosmic landscape of interconnected elements.",
+    price: 36000,
+    image: "https://images.unsplash.com/photo-1496307653780-42ee777d4833?q=80&w=500&auto=format&fit=crop",
+    category: "Zentangle",
+    medium: "Ink on Paper",
+    dimensions: "24 x 24 inches",
+    artist: artists[3],
+    inStock: true
+  },
+  {
+    id: "art-13",
+    title: "Monsoon Echoes",
+    description: "A delicate watercolor painting capturing the ephemeral beauty of rain-soaked landscapes during the monsoon season.",
+    price: 41000,
+    image: "https://images.unsplash.com/photo-1431576901776-e539bd916ba2?q=80&w=500&auto=format&fit=crop",
+    category: "Watercolor",
+    medium: "Watercolor on Paper",
+    dimensions: "30 x 40 inches",
+    artist: artists[0],
+    inStock: true
+  },
+  {
+    id: "art-14",
+    title: "Eternal Form",
+    description: "A contemporary bronze sculpture expressing the fluidity and permanence of natural forms through abstract shapes.",
+    price: 75000,
+    image: "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?q=80&w=500&auto=format&fit=crop",
+    category: "Sculpture",
+    medium: "Bronze",
+    dimensions: "24 x 18 x 12 inches",
+    artist: artists[1],
+    inStock: true
   }
 ];
 
@@ -133,5 +205,11 @@ export const categories = [
   "Abstract",
   "Contemporary",
   "Architecture",
-  "Folk Art"
+  "Folk Art",
+  "Mandala",
+  "Canvas",
+  "Sketch",
+  "Zentangle",
+  "Watercolor",
+  "Sculpture"
 ];
