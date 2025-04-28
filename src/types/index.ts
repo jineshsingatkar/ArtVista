@@ -6,6 +6,20 @@ export interface User {
   isArtist: boolean;
   role: string;
   createdAt: string;
+  mobile?: string;
+  profile?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+    country?: string;
+  };
+  paymentDetails?: {
+    cardNumber?: string;
+    cardHolder?: string;
+    expiryDate?: string;
+    cvv?: string;
+  };
   artistData?: {
     bio: string;
     specialization: string[];

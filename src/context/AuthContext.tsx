@@ -6,6 +6,8 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string, role?: string) => Promise<boolean>;
+  loginWithMobile: (mobile: string, password: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<boolean>;
   signup: (name: string, email: string, password: string, role?: string, artistData?: any) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -52,6 +54,20 @@ const mockUsers = [
     isArtist: false,
     role: "user",
     createdAt: new Date().toISOString(),
+    mobile: "1234567890",
+    profile: {
+      address: "123 Main St",
+      city: "Pune",
+      state: "Maharashtra",
+      postalCode: "411004",
+      country: "India",
+    },
+    paymentDetails: {
+      cardNumber: "4111111111111111",
+      cardHolder: "Demo User",
+      expiryDate: "12/25",
+      cvv: "123",
+    },
   },
 ];
 
@@ -120,6 +136,92 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       toast({
         title: "Login Failed",
         description: "An error occurred during login",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithMobile = async (mobile: string, password: string): Promise<boolean> => {
+    setIsLoading(true);
+    
+    try {
+      const foundUser = mockUsers.find(
+        (u) => u.mobile === mobile && u.password === password
+      );
+
+      if (!foundUser) {
+        toast({
+          title: "Login Failed",
+          description: "Invalid mobile number or password",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // Remove password before storing
+      const { password: _, ...userWithoutPassword } = foundUser;
+      
+      setUser(userWithoutPassword);
+      setIsAdmin(foundUser.isAdmin);
+      setIsArtist(foundUser.isArtist);
+      
+      // Store user in localStorage
+      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
+
+      toast({
+        title: "Login Successful",
+        description: `Welcome to ArtVista${foundUser.isArtist ? " as an Artist" : ""}!`,
+      });
+      return true;
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Login Failed",
+        description: "An error occurred during login",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<boolean> => {
+    setIsLoading(true);
+    
+    try {
+      // In a real app, this would handle Google OAuth
+      // For now, we'll just simulate a successful login with a mock user
+      const mockGoogleUser = {
+        id: "google-1",
+        email: "google@example.com",
+        name: "Google User",
+        isAdmin: false,
+        isArtist: false,
+        role: "user",
+        createdAt: new Date().toISOString(),
+      };
+      
+      setUser(mockGoogleUser);
+      setIsAdmin(false);
+      setIsArtist(false);
+      
+      // Store user in localStorage
+      localStorage.setItem("user", JSON.stringify(mockGoogleUser));
+
+      toast({
+        title: "Login Successful",
+        description: "Welcome to ArtVista!",
+      });
+      return true;
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast({
+        title: "Login Failed",
+        description: "An error occurred during Google login",
         variant: "destructive",
       });
       return false;
@@ -207,6 +309,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         user,
         isLoading,
         login,
+        loginWithMobile,
+        loginWithGoogle,
         signup,
         logout,
         isAuthenticated: !!user,
