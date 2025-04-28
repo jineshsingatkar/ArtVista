@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Login as LoginIcon } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -122,7 +122,7 @@ const Login = () => {
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Signing in..." : "Sign In"}
-                <LoginIcon className="ml-2 h-4 w-4" />
+                <LogIn className="ml-2 h-4 w-4" />
               </Button>
             </form>
           </Form>

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Link, useLocation } from "react-router-dom";
-import { Cart, Login, Menu, User, UserPlus } from "lucide-react";
+import { ShoppingCart, LogIn, Menu, User, UserPlus } from "lucide-react";
 import { useState } from "react";
 
 const Navbar = () => {
@@ -62,7 +62,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Link to="/cart" className="relative mr-2">
             <Button variant="ghost" size="icon" className="relative">
-              <Cart className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
                 <Badge variant="destructive" className="absolute -right-1 -top-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
                   {totalItems}
@@ -98,7 +98,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-2">
               <Button variant="ghost" asChild>
                 <Link to="/login" className="flex items-center gap-2">
-                  <Login className="h-4 w-4" />
+                  <LogIn className="h-4 w-4" />
                   Sign In
                 </Link>
               </Button>
