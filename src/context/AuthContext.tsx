@@ -1,16 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User as FirebaseUser
-} from "firebase/auth";
-import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { app } from "@/lib/firebase";
-import { User } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
+import { User } from "@/types";
 
 interface AuthContextType {
   user: User | null;
@@ -25,128 +15,111 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
+// Mock user database
+const mockUsers = [
+  {
+    id: "admin-1",
+    email: "admin@admin.com",
+    password: "Admin1234",
+    name: "Admin User",
+    isAdmin: true,
+    isArtist: false,
+    role: "admin",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "artist-1",
+    email: "artist@artist.com",
+    password: "Artist1234",
+    name: "Demo Artist",
+    isAdmin: false,
+    isArtist: true,
+    role: "artist",
+    createdAt: new Date().toISOString(),
+    artistData: {
+      bio: "Welcome to my art gallery! I create unique pieces that blend traditional and modern techniques.",
+      specialization: ["Painting", "Digital Art"],
+      portfolio: [],
+      joinedDate: new Date().toISOString(),
+    },
+  },
+  {
+    id: "user-1",
+    email: "user@user.com",
+    password: "User1234",
+    name: "Demo User",
+    isAdmin: false,
+    isArtist: false,
+    role: "user",
+    createdAt: new Date().toISOString(),
+  },
+];
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isArtist, setIsArtist] = useState<boolean>(false);
   const { toast } = useToast();
-  const auth = getAuth();
-  const db = getFirestore();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUser({
-            id: firebaseUser.uid,
-            email: firebaseUser.email || "",
-            name: userData.name,
-            isAdmin: userData.isAdmin || false,
-            isArtist: userData.isArtist || false,
-            artistData: userData.artistData || null,
-          });
-          setIsAdmin(userData.isAdmin || false);
-          setIsArtist(userData.isArtist || false);
-        }
-      } else {
-        setUser(null);
-        setIsAdmin(false);
-        setIsArtist(false);
-      }
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [auth, db]);
+    // Check if user is logged in from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setIsAdmin(parsedUser.isAdmin);
+      setIsArtist(parsedUser.isArtist);
+    }
+  }, []);
 
   const login = async (email: string, password: string, role?: string): Promise<boolean> => {
     setIsLoading(true);
     
     try {
-      // Special case for admin login
-      if (email === "admin@admin.com" && password === "123456") {
-        const adminUser = {
-          id: "admin-1",
-          email: "admin@admin.com",
-          name: "Admin User",
-          isAdmin: true,
-          isArtist: false,
-        };
-        setUser(adminUser);
-        setIsAdmin(true);
-        setIsArtist(false);
+      const foundUser = mockUsers.find(
+        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+      );
+
+      if (!foundUser) {
         toast({
-          title: "Admin Login Successful",
-          description: "Welcome to the admin panel",
+          title: "Login Failed",
+          description: "Invalid email or password",
+          variant: "destructive",
         });
-        return true;
+        return false;
       }
 
-      // Special case for artist login
-      if (email === "Artist@Artist.com" && password === "123456") {
-        const artistUser = {
-          id: "artist-1",
-          email: "Artist@Artist.com",
-          name: "Demo Artist",
-          isAdmin: false,
-          isArtist: true,
-          artistData: {
-            bio: "Welcome to my art gallery! I create unique pieces that blend traditional and modern techniques.",
-            specialization: ["Painting", "Digital Art"],
-            portfolio: [],
-            joinedDate: new Date(),
-          },
-        };
-        setUser(artistUser);
-        setIsAdmin(false);
-        setIsArtist(true);
+      // Check role if specified
+      if (role && foundUser.role !== role) {
         toast({
-          title: "Artist Login Successful",
-          description: "Welcome to your artist dashboard",
+          title: "Login Failed",
+          description: `This account is not registered as a ${role}`,
+          variant: "destructive",
         });
-        return true;
+        return false;
       }
 
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+      // Remove password before storing
+      const { password: _, ...userWithoutPassword } = foundUser;
       
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        
-        // Check if the user is trying to login as an artist but is not an artist
-        if (role === "artist" && !userData.isArtist) {
-          toast({
-            title: "Login Failed",
-            description: "This account is not registered as an artist",
-            variant: "destructive",
-          });
-          return false;
-        }
-        
-        // Check if the user is trying to login as a regular user but is an artist
-        if (role === "user" && userData.isArtist) {
-          toast({
-            title: "Login Failed",
-            description: "This account is registered as an artist. Please login as an artist.",
-            variant: "destructive",
-          });
-          return false;
-        }
-      }
+      setUser(userWithoutPassword);
+      setIsAdmin(foundUser.isAdmin);
+      setIsArtist(foundUser.isArtist);
+      
+      // Store user in localStorage
+      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
 
       toast({
         title: "Login Successful",
-        description: "Welcome to ArtVista!",
+        description: `Welcome to ArtVista${foundUser.isArtist ? " as an Artist" : ""}!`,
       });
       return true;
     } catch (error) {
       console.error("Login error:", error);
       toast({
         title: "Login Failed",
-        description: "Invalid email or password",
+        description: "An error occurred during login",
         variant: "destructive",
       });
       return false;
@@ -165,26 +138,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const newUser = userCredential.user;
-      
-      const userData = {
+      // Check if email already exists
+      if (mockUsers.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        toast({
+          title: "Signup Failed",
+          description: "This email is already registered",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      const newUser = {
+        id: `user-${mockUsers.length + 1}`,
         name,
         email,
+        password,
         isAdmin: false,
         isArtist: role === "artist",
-        createdAt: new Date(),
+        role: role || "user",
+        createdAt: new Date().toISOString(),
+        ...(role === "artist" && artistData ? { artistData } : {}),
       };
 
-      if (role === "artist" && artistData) {
-        userData.artistData = artistData;
-      }
+      // In a real app, you would store this in a database
+      mockUsers.push(newUser);
+
+      // Remove password before storing
+      const { password: _, ...userWithoutPassword } = newUser;
       
-      await setDoc(doc(db, "users", newUser.uid), userData);
+      setUser(userWithoutPassword);
+      setIsArtist(role === "artist");
       
+      // Store user in localStorage
+      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
+
       toast({
         title: "Account Created",
-        description: `Welcome to ArtVista${role === "artist" ? " as an Artist" : ""}!`,
+        description: `Welcome to ArtVista${role === "artist" ? " as an Artist" : " as an Art Lover"}!`,
       });
       return true;
     } catch (error) {
@@ -200,24 +190,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-      setIsAdmin(false);
-      setIsArtist(false);
-      toast({
-        title: "Logged Out",
-        description: "You have been logged out successfully",
-      });
-    } catch (error) {
-      console.error("Logout error:", error);
-      toast({
-        title: "Logout Failed",
-        description: "An error occurred during logout",
-        variant: "destructive",
-      });
-    }
+  const logout = () => {
+    setUser(null);
+    setIsAdmin(false);
+    setIsArtist(false);
+    localStorage.removeItem("user");
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully",
+    });
   };
 
   return (

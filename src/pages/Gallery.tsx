@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { artworks, categories } from "@/data/mockData";
 import { Artwork } from "@/types";
@@ -91,60 +90,6 @@ const Gallery = () => {
                   {category}
                 </Button>
               ))}
-            </div>
-          </div>
-
-          <div className="bg-card p-4 rounded-lg border">
-            <h3 className="font-medium mb-3">Art Types</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCategoryChange("Mandala")}
-                className={selectedCategory === "Mandala" ? "bg-secondary" : ""}
-              >
-                Mandala Art
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCategoryChange("Canvas")}
-                className={selectedCategory === "Canvas" ? "bg-secondary" : ""}
-              >
-                Canvas Painting
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCategoryChange("Sketch")}
-                className={selectedCategory === "Sketch" ? "bg-secondary" : ""}
-              >
-                Sketch
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCategoryChange("Zentangle")}
-                className={selectedCategory === "Zentangle" ? "bg-secondary" : ""}
-              >
-                Zentangle Art
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCategoryChange("Watercolor")}
-                className={selectedCategory === "Watercolor" ? "bg-secondary" : ""}
-              >
-                Watercolor
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCategoryChange("Sculpture")}
-                className={selectedCategory === "Sculpture" ? "bg-secondary" : ""}
-              >
-                Sculpture
-              </Button>
             </div>
           </div>
 

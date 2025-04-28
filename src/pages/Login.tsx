@@ -1,188 +1,85 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { LogIn } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters",
-  }),
-  role: z.enum(["user", "artist"]),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 const Login = () => {
-  const { login, isAuthenticated } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      role: "user",
-    },
-  });
-
-  useEffect(() => {
-    // If user is already logged in, redirect them
-    if (isAuthenticated) {
-      const from = location.state?.from || "/";
-      navigate(from);
-    }
-  }, [isAuthenticated, navigate, location]);
-
-  const onSubmit = async (values: FormValues) => {
-    setIsSubmitting(true);
-    
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const success = await login(values.email, values.password, values.role);
-      
-      if (success) {
-        const from = location.state?.from || "/";
-        navigate(from);
-      }
-    } finally {
-      setIsSubmitting(false);
+      await login(email, password);
+      toast.success('Login successful!');
+      navigate('/');
+    } catch (error) {
+      toast.error('Invalid email or password');
     }
   };
 
   return (
-    <div className="container py-12">
-      <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">
-            Sign in to your ArtVista account
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
+          </h2>
         </div>
-        
-        <div className="bg-card p-6 rounded-lg border shadow-sm">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Login as</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="user" id="user" />
-                          <Label htmlFor="user">Art Lover</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="artist" id="artist" />
-                          <Label htmlFor="artist">Artist</Label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="email-address"
                 name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              
-              <FormField
-                control={form.control}
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
                 name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                type="password"
+                autoComplete="current-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
-              
-              <div className="flex justify-end">
-                <Link to="/forgot-password" className="text-sm text-kala-primary hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-              
-              <Button
-                type="submit"
-                className="w-full bg-kala-primary hover:bg-kala-primary/90"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Signing in..." : "Sign In"}
-                <LogIn className="ml-2 h-4 w-4" />
-              </Button>
-            </form>
-          </Form>
-
-          <div className="mt-6 text-center text-sm">
-            <p>
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-kala-primary hover:underline font-medium">
-                Sign up
-              </Link>
-            </p>
+            </div>
           </div>
-        </div>
 
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>
-            For demo purposes, use:
-            <br />
-            <strong>Admin:</strong>
-            <br />
-            Email: <strong>admin@admin.com</strong>
-            <br />
-            Password: <strong>123456</strong>
-            <br /><br />
-            <strong>Artist:</strong>
-            <br />
-            Email: <strong>Artist@Artist.com</strong>
-            <br />
-            Password: <strong>123456</strong>
-          </p>
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Sign in
+            </button>
+          </div>
+        </form>
+        <div className="text-center">
+          <Link
+            to="/signup"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            Don't have an account? Sign up
+          </Link>
         </div>
       </div>
     </div>

@@ -4,11 +4,13 @@ export interface User {
   name: string;
   isAdmin: boolean;
   isArtist: boolean;
+  role: string;
+  createdAt: string;
   artistData?: {
     bio: string;
     specialization: string[];
-    portfolio: string[];
-    joinedDate: Date;
+    portfolio: any[];
+    joinedDate: string;
   };
 }
 
