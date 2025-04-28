@@ -93,14 +93,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     
     try {
+      // Find user by email (case-insensitive)
       const foundUser = mockUsers.find(
-        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        (u) => u.email.toLowerCase() === email.toLowerCase()
       );
 
       if (!foundUser) {
         toast({
           title: "Login Failed",
-          description: "Invalid email or password",
+          description: "No account found with this email address",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // Compare passwords
+      if (foundUser.password !== password) {
+        toast({
+          title: "Login Failed",
+          description: "Incorrect password",
           variant: "destructive",
         });
         return false;
@@ -135,7 +146,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Login error:", error);
       toast({
         title: "Login Failed",
-        description: "An error occurred during login",
+        description: "An error occurred during login. Please try again.",
         variant: "destructive",
       });
       return false;

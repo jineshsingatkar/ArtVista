@@ -8,31 +8,55 @@ const Login = () => {
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [loginMethod, setLoginMethod] = useState<'email' | 'mobile'>('email');
+  const [isLoading, setIsLoading] = useState(false);
   const { login, loginWithMobile, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
+      let success = false;
       if (loginMethod === 'email') {
-        await login(email, password);
+        if (!email || !password) {
+          toast.error('Please fill in all fields');
+          return;
+        }
+        success = await login(email, password);
       } else {
-        await loginWithMobile(mobile, password);
+        if (!mobile || !password) {
+          toast.error('Please fill in all fields');
+          return;
+        }
+        success = await loginWithMobile(mobile, password);
       }
-      toast.success('Login successful!');
-      navigate('/');
+
+      if (success) {
+        toast.success('Login successful!');
+        navigate('/');
+      }
     } catch (error) {
-      toast.error('Invalid credentials');
+      console.error('Login error:', error);
+      toast.error('An error occurred during login. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    setIsLoading(true);
     try {
-      await loginWithGoogle();
-      toast.success('Login successful!');
-      navigate('/');
+      const success = await loginWithGoogle();
+      if (success) {
+        toast.success('Login successful!');
+        navigate('/');
+      }
     } catch (error) {
-      toast.error('Failed to login with Google');
+      console.error('Google login error:', error);
+      toast.error('Failed to login with Google. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,6 +109,7 @@ const Login = () => {
                   placeholder="Email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
             ) : (
@@ -102,6 +127,7 @@ const Login = () => {
                   placeholder="Mobile number"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
             )}
@@ -119,6 +145,7 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -126,9 +153,12 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                isLoading ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
-              Sign in
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
 
@@ -145,7 +175,10 @@ const Login = () => {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className={`w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium ${
+                isLoading ? 'text-gray-400 bg-gray-100' : 'text-gray-700 bg-white hover:bg-gray-50'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -165,7 +198,7 @@ const Login = () => {
                   fill="#EA4335"
                 />
               </svg>
-              Google
+              {isLoading ? 'Signing in...' : 'Google'}
             </button>
           </div>
         </form>
