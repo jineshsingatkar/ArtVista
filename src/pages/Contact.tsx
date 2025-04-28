@@ -70,11 +70,11 @@ const Contact = () => {
             <div className="bg-card p-4 rounded-lg border">
               <h3 className="font-medium">Address</h3>
               <address className="not-italic text-muted-foreground">
-                Kala Bazaar Gallery
+                ArtVista Gallery
                 <br />
-                123 Art Street, Colaba
+                Deccan Gym-khana
                 <br />
-                Mumbai, Maharashtra 400001
+                Pune, Maharashtra 411004
                 <br />
                 India
               </address>
@@ -176,7 +176,7 @@ const Contact = () => {
       <div className="rounded-lg overflow-hidden h-80 mb-12">
         <iframe
           title="Map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241316.64333236168!2d72.74110193988438!3d19.08252990602627!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1651825200000!5m2!1sen!2sin"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.1876316769654!2d73.83563147501424!3d18.517499982584224!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c07f10ada5b5%3A0x55d015e3f10705c6!2sDeccan%20Gymkhana%2C%20Pune%2C%20Maharashtra%20411004!5e0!3m2!1sen!2sin!4v1682834567890!5m2!1sen!2sin"
           width="100%"
           height="100%"
           style={{ border: 0 }}
