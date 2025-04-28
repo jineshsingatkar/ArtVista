@@ -93,15 +93,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     
     try {
-      console.log('Attempting login with:', { email, password, role });
-      console.log('Available users:', mockUsers.map(u => ({ email: u.email, role: u.role })));
+      // Validate input
+      if (!email || !password) {
+        toast({
+          title: "Login Failed",
+          description: "Please enter both email and password",
+          variant: "destructive",
+        });
+        return false;
+      }
 
       // Find user by email (case-insensitive)
       const foundUser = mockUsers.find(
         (u) => u.email.toLowerCase() === email.toLowerCase()
       );
-
-      console.log('Found user:', foundUser ? { email: foundUser.email, role: foundUser.role } : 'No user found');
 
       if (!foundUser) {
         toast({
@@ -113,12 +118,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Compare passwords
-      console.log('Password comparison:', { 
-        inputPassword: password, 
-        storedPassword: foundUser.password,
-        match: foundUser.password === password 
-      });
-
       if (foundUser.password !== password) {
         toast({
           title: "Login Failed",
@@ -130,7 +129,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Check role if specified
       if (role && foundUser.role !== role) {
-        console.log('Role mismatch:', { expected: role, actual: foundUser.role });
         toast({
           title: "Login Failed",
           description: `This account is not registered as a ${role}`,
