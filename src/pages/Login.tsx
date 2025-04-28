@@ -71,7 +71,7 @@ const Login = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-serif font-bold">Welcome Back</h1>
           <p className="text-muted-foreground mt-2">
-            Sign in to your Kala Bazaar account
+            Sign in to your ArtVista account
           </p>
         </div>
         

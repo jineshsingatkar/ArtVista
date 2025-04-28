@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { cn } from "@/lib/utils";
@@ -38,7 +37,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center">
             <span className="text-2xl font-serif font-bold tracking-tight text-kala-primary">
-              Kala<span className="text-foreground">Bazaar</span>
+              Art<span className="text-foreground">Vista</span>
             </span>
           </Link>
         </div>
