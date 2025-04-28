@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-serif font-bold tracking-tight text-kala-primary">
-                Kala<span className="text-foreground">Bazaar</span>
+                Art<span className="text-foreground">Vista</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -74,7 +74,7 @@ const Footer = () => {
         </div>
         <div className="mt-8 border-t pt-6">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Kala Bazaar. All rights reserved.
+            &copy; {new Date().getFullYear()} ArtVista. All rights reserved.
           </p>
         </div>
       </div>

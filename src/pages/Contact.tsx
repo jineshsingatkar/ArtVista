@@ -1,8 +1,8 @@
-
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import emailjs from '@emailjs/browser';
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -43,34 +43,33 @@ const Contact = () => {
   }, []);
 
   const onSubmit = async (values: FormValues) => {
-    // In a real application with email service configured in .env
-    console.log("Form submitted:", values);
-    
     try {
-      // If email API is configured
-      const emailApiEndpoint = import.meta.env.VITE_EMAIL_API_ENDPOINT;
-      const emailApiKey = import.meta.env.VITE_EMAIL_API_KEY;
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const userId = import.meta.env.VITE_EMAILJS_USER_ID;
       
-      if (emailApiEndpoint && emailApiKey) {
-        // This would be a real API call in production
-        // await fetch(emailApiEndpoint, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${emailApiKey}`
-        //   },
-        //   body: JSON.stringify(values)
-        // });
+      if (serviceId && templateId && userId) {
+        await emailjs.send(
+          serviceId,
+          templateId,
+          {
+            from_name: values.name,
+            from_email: values.email,
+            subject: values.subject,
+            message: values.message,
+          },
+          userId
+        );
         
-        console.log("Would send email with:", { emailApiEndpoint, emailApiKey });
+        toast({
+          title: "Message Sent",
+          description: "We'll get back to you as soon as possible.",
+        });
+        
+        form.reset();
+      } else {
+        throw new Error("EmailJS configuration is missing");
       }
-      
-      toast({
-        title: "Message Sent",
-        description: "We'll get back to you as soon as possible.",
-      });
-      
-      form.reset();
     } catch (error) {
       console.error("Error sending message:", error);
       toast({

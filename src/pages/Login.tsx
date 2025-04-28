@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -16,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -24,6 +25,7 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters",
   }),
+  role: z.enum(["user", "artist"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -39,6 +41,7 @@ const Login = () => {
     defaultValues: {
       email: "",
       password: "",
+      role: "user",
     },
   });
 
@@ -54,7 +57,7 @@ const Login = () => {
     setIsSubmitting(true);
     
     try {
-      const success = await login(values.email, values.password);
+      const success = await login(values.email, values.password, values.role);
       
       if (success) {
         const from = location.state?.from || "/";
@@ -78,6 +81,33 @@ const Login = () => {
         <div className="bg-card p-6 rounded-lg border shadow-sm">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Login as</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="user" id="user" />
+                          <Label htmlFor="user">Art Lover</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="artist" id="artist" />
+                          <Label htmlFor="artist">Artist</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -141,9 +171,17 @@ const Login = () => {
           <p>
             For demo purposes, use:
             <br />
-            Email: <strong>admin@kalabazaar.com</strong>
+            <strong>Admin:</strong>
             <br />
-            Password: <strong>admin123</strong>
+            Email: <strong>admin@admin.com</strong>
+            <br />
+            Password: <strong>123456</strong>
+            <br /><br />
+            <strong>Artist:</strong>
+            <br />
+            Email: <strong>Artist@Artist.com</strong>
+            <br />
+            Password: <strong>123456</strong>
           </p>
         </div>
       </div>

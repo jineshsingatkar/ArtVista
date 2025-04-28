@@ -1,9 +1,15 @@
-
 export interface User {
   id: string;
   email: string;
   name: string;
   isAdmin: boolean;
+  isArtist: boolean;
+  artistData?: {
+    bio: string;
+    specialization: string[];
+    portfolio: string[];
+    joinedDate: Date;
+  };
 }
 
 export interface Artist {
@@ -24,6 +30,7 @@ export interface Artwork {
   dimensions: string;
   artist: Artist;
   inStock: boolean;
+  createdAt: Date;
 }
 
 export interface CartItem {
@@ -49,4 +56,14 @@ export interface ShippingAddress {
   state: string;
   postalCode: string;
   country: string;
+}
+
+export interface Inquiry {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  createdAt: Date;
+  status: 'new' | 'read' | 'replied';
 }

@@ -90,6 +90,11 @@ const Navbar = () => {
                     <Link to="/admin">Admin Dashboard</Link>
                   </DropdownMenuItem>
                 )}
+                {user?.isArtist && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/artist-dashboard">Artist Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

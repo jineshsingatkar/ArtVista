@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -15,7 +14,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { UserPlus } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -28,6 +31,10 @@ const formSchema = z.object({
     message: "Password must be at least 6 characters",
   }),
   confirmPassword: z.string(),
+  role: z.enum(["user", "artist"]),
+  bio: z.string().optional(),
+  specialization: z.string().optional(),
+  portfolio: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -35,10 +42,25 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const categories = [
+  "Painting",
+  "Sculpture",
+  "Digital Art",
+  "Photography",
+  "Mixed Media",
+  "Printmaking",
+  "Drawing",
+  "Ceramics",
+  "Textile Art",
+  "Other"
+];
+
 const Signup = () => {
   const { signup, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [customCategory, setCustomCategory] = useState<string>("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,11 +69,14 @@ const Signup = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      role: "user",
+      bio: "",
+      specialization: "",
+      portfolio: "",
     },
   });
 
   useEffect(() => {
-    // If user is already logged in, redirect to home
     if (isAuthenticated) {
       navigate("/");
     }
@@ -61,7 +86,19 @@ const Signup = () => {
     setIsSubmitting(true);
     
     try {
-      const success = await signup(values.name, values.email, values.password);
+      const specialization = selectedCategory === "Other" ? customCategory : selectedCategory;
+      const success = await signup(
+        values.name,
+        values.email,
+        values.password,
+        values.role,
+        values.role === "artist" ? {
+          bio: values.bio || "",
+          specialization: [specialization],
+          portfolio: values.portfolio ? [values.portfolio] : [],
+          joinedDate: new Date(),
+        } : undefined
+      );
       
       if (success) {
         navigate("/");
@@ -77,7 +114,7 @@ const Signup = () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-serif font-bold">Create Account</h1>
           <p className="text-muted-foreground mt-2">
-            Join Kala Bazaar and start your art collection
+            Join ArtVista and start your art collection
           </p>
         </div>
         
@@ -147,6 +184,110 @@ const Signup = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sign up as</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="user" id="user" />
+                          <Label htmlFor="user">Art Lover</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="artist" id="artist" />
+                          <Label htmlFor="artist">Artist</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("role") === "artist" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="bio"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bio</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Tell us about yourself and your art"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="space-y-2">
+                    <Label>Specialization</Label>
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={setSelectedCategory}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your art category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {selectedCategory === "Other" && (
+                    <FormField
+                      control={form.control}
+                      name="specialization"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom Category</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your art category"
+                              value={customCategory}
+                              onChange={(e) => setCustomCategory(e.target.value)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+
+                  <FormField
+                    control={form.control}
+                    name="portfolio"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Portfolio Link</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Link to your portfolio (optional)"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
               
               <Button
                 type="submit"

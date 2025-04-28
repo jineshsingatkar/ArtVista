@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 
 const About = () => {
@@ -8,12 +7,12 @@ const About = () => {
 
   return (
     <div className="container py-8">
-      <h1 className="text-3xl md:text-4xl font-serif mb-6">About Kala Bazaar</h1>
+      <h1 className="text-3xl md:text-4xl font-serif mb-6">About ArtVista</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         <div>
           <p className="text-lg mb-4">
-            Kala Bazaar is India's premier online marketplace for discovering and
+            ArtVista is India's premier online marketplace for discovering and
             collecting fine art from renowned and emerging Indian artists.
           </p>
           <p className="mb-4">
