@@ -67,6 +67,14 @@ const Login = () => {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
+          <div className="mt-2 text-center text-sm text-gray-600">
+            <p className="font-medium">Demo Credentials:</p>
+            <div className="mt-2 space-y-1">
+              <p>Admin: admin@admin.com / Admin1234</p>
+              <p>Artist: artist@artist.com / Artist1234</p>
+              <p>User: user@user.com / User1234</p>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-center space-x-4 mb-4">

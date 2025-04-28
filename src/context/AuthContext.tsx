@@ -28,6 +28,19 @@ const mockUsers = [
     isArtist: false,
     role: "admin",
     createdAt: new Date().toISOString(),
+    profile: {
+      address: "123 Admin Street",
+      city: "Mumbai",
+      state: "Maharashtra",
+      postalCode: "400001",
+      country: "India",
+    },
+    paymentDetails: {
+      cardNumber: "4111111111111111",
+      cardHolder: "Admin User",
+      expiryDate: "12/25",
+      cvv: "123",
+    },
   },
   {
     id: "artist-1",
@@ -44,6 +57,19 @@ const mockUsers = [
       portfolio: [],
       joinedDate: new Date().toISOString(),
     },
+    profile: {
+      address: "456 Artist Lane",
+      city: "Delhi",
+      state: "Delhi",
+      postalCode: "110001",
+      country: "India",
+    },
+    paymentDetails: {
+      cardNumber: "4111111111111111",
+      cardHolder: "Demo Artist",
+      expiryDate: "12/25",
+      cvv: "123",
+    },
   },
   {
     id: "user-1",
@@ -56,10 +82,10 @@ const mockUsers = [
     createdAt: new Date().toISOString(),
     mobile: "1234567890",
     profile: {
-      address: "123 Main St",
-      city: "Pune",
-      state: "Maharashtra",
-      postalCode: "411004",
+      address: "789 User Road",
+      city: "Bangalore",
+      state: "Karnataka",
+      postalCode: "560001",
       country: "India",
     },
     paymentDetails: {
