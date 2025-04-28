@@ -17,21 +17,27 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      console.log('Login form submitted:', { loginMethod, email, mobile, password });
+      
       let success = false;
       if (loginMethod === 'email') {
         if (!email || !password) {
           toast.error('Please fill in all fields');
           return;
         }
+        console.log('Attempting email login...');
         success = await login(email, password);
       } else {
         if (!mobile || !password) {
           toast.error('Please fill in all fields');
           return;
         }
+        console.log('Attempting mobile login...');
         success = await loginWithMobile(mobile, password);
       }
 
+      console.log('Login result:', success);
+      
       if (success) {
         toast.success('Login successful!');
         navigate('/');
@@ -47,7 +53,10 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
+      console.log('Attempting Google login...');
       const success = await loginWithGoogle();
+      console.log('Google login result:', success);
+      
       if (success) {
         toast.success('Login successful!');
         navigate('/');
